@@ -3,7 +3,7 @@
 source /mnt/nsingh/miniconda3/etc/profile.d/conda.sh
 conda activate unlearning
 
-CUDA_VISIBLE_DEVICES=0,1 
+CUDA_VISIBLE_DEVICES=2,3 
 export MASTER_PORT=$(python -c "import socket; s=socket.socket(); s.bind(('', 0)); print(s.getsockname()[1]); s.close()")
 echo "Master Port: $MASTER_PORT"
 
@@ -12,9 +12,9 @@ models=(
 
 )
 trainers_experiments=(
-    "GradAscent unlearn/tofu/default.yaml"
-    "GradJSDiff unlearn/tofu/default.yaml"
-    "GradDiff unlearn/tofu/default.yaml"
+    "NPO unlearn/tofu/default.yaml"
+    "DPO unlearn/tofu/idk.yaml"
+    "RMU  unlearn/tofu/default.yaml"
 )
 forget_retain_splits=(
     "forget01 retain99"
@@ -44,7 +44,7 @@ for split in "${forget_retain_splits[@]}"; do
             echo ${task_name}: Unlearning ${model_path} using ${trainer}
 
             # Unlearn
-            CUDA_VISIBLE_DEVICES=0,1 accelerate launch --config_file configs/accelerate/default_config.yaml --main_process_port $MASTER_PORT \
+            CUDA_VISIBLE_DEVICES=2,3 accelerate launch --config_file configs/accelerate/default_config.yaml --main_process_port $MASTER_PORT \
             src/train.py --config-name=unlearn.yaml \
             experiment=${experiment} \
             trainer=${trainer} \
