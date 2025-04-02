@@ -5,8 +5,8 @@ conda activate unlearning
 
 export MASTER_PORT=$(python -c "import socket; s=socket.socket(); s.bind(('', 0)); print(s.getsockname()[1]); s.close()")
 echo "Master Port: $MASTER_PORT"
-export HF_HOME=/mnt/nsingh/huggingface-models/huggingface
 
+export HF_HOME=/mnt/nsingh/huggingface-models/huggingface
 per_device_train_batch_size=2
 gradient_accumulation_steps=8
 
@@ -20,11 +20,8 @@ data_splits=(
 )
 
 trainers=(
-    "GradDiff"
-    "GradJSDiff"
-    "GradAscent"
-    # "NPO"
-    # "SimNPO"
+    "NPO"
+    "SimNPO"
 )
 
 # #########################################################
@@ -37,7 +34,7 @@ for data_split in "${data_splits[@]}"; do
 
         task_name=muse_${model}_${data_split}_${trainer}
 
-        CUDA_VISIBLE_DEVICES=0,1,2 accelerate launch --config_file configs/accelerate/default_config.yaml --main_process_port $MASTER_PORT \
+        CUDA_VISIBLE_DEVICES=3,4,5 accelerate launch --config_file configs/accelerate/default_config.yaml --main_process_port $MASTER_PORT \
         src/train.py --config-name=unlearn.yaml \
         experiment=unlearn/muse/default.yaml \
         model=${model} \
@@ -50,7 +47,7 @@ for data_split in "${data_splits[@]}"; do
         trainer.args.ddp_find_unused_parameters=true \
         trainer.args.gradient_checkpointing=true
 
-        CUDA_VISIBLE_DEVICES=0 python src/eval.py \
+        CUDA_VISIBLE_DEVICES=3 python src/eval.py \
         experiment=eval/muse/default.yaml \
         data_split=${data_split} \ 
         task_name=${task_name} \
@@ -74,7 +71,7 @@ for data_split in "${data_splits[@]}"; do
             
             task_name=muse_${model}_${data_split}_${trainer}_scal_${scal} \
             
-            CUDA_VISIBLE_DEVICES=0,1,2 accelerate launch --config_file configs/accelerate/default_config.yaml --main_process_port $MASTER_PORT \
+            CUDA_VISIBLE_DEVICES=3,4,5 accelerate launch --config_file configs/accelerate/default_config.yaml --main_process_port $MASTER_PORT \
             src/train.py --config-name=unlearn.yaml \
             experiment=unlearn/muse/scalability.yaml \
             model=${model} \
@@ -88,7 +85,7 @@ for data_split in "${data_splits[@]}"; do
             trainer.args.ddp_find_unused_parameters=true \
             trainer.args.gradient_checkpointing=true
 
-            CUDA_VISIBLE_DEVICES=0 python src/eval.py \
+            CUDA_VISIBLE_DEVICES=3 python src/eval.py \
             experiment=eval/muse/default.yaml \
             data_split=${data_split} \ 
             task_name=${task_name} \
