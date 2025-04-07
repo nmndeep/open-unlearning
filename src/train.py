@@ -1,9 +1,11 @@
 import hydra
 from omegaconf import DictConfig
-from data import get_data, get_collators
+from trained.utils import seed_everything
+
+from data import get_collators, get_data
+from evals import get_evaluator
 from model import get_model
 from trainer import load_trainer
-from evals import get_evaluator
 
 
 @hydra.main(version_base=None, config_path="../configs", config_name="train.yaml")
@@ -12,6 +14,7 @@ def main(cfg: DictConfig):
     Args:
         cfg (DictConfig): Config to train
     """
+    seed_everything(cfg.trainer.args.seed)
     mode = cfg.get("mode", "train")
     model_cfg = cfg.model
     template_args = model_cfg.template_args
@@ -63,10 +66,13 @@ def main(cfg: DictConfig):
         trainer.train()
         trainer.save_state()
         trainer.save_model(trainer_args.output_dir)
+        print(f"FINAL_STRING:{trainer_args.output_dir}", flush=True)
+        return trainer_args.output_dir
 
     if trainer_args.do_eval:
         trainer.evaluate(metric_key_prefix="eval")
-
+        return trainer_args.output_dir
 
 if __name__ == "__main__":
-    main()
+    otdir = main()
+    print(f"FINAL_STRING:{otdir}", flush=True)

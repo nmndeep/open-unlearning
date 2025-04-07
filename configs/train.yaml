@@ -11,3 +11,5 @@ defaults:
 
 mode: train
 task_name: ???
+
+seed: 0

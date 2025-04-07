@@ -4,6 +4,7 @@ from omegaconf import DictConfig
 
 from evals import get_evaluators
 from model import get_model
+from trainer.utils import seed_everything
 
 
 def change_at_runtime(eval_cfg, typ):
@@ -53,6 +54,7 @@ def main(cfg: DictConfig):
     Args:
         cfg (DictConfig): Config to train
     """
+    seed_everything(cfg.seed)
     model_cfg = cfg.model
     template_args = model_cfg.template_args
     # exit()
