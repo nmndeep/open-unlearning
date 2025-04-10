@@ -1,16 +1,18 @@
 import logging
+
 import numpy as np
 import scipy as sc
 from torch.utils.data import DataLoader
 
-
+from evals.metrics.base import unlearning_metric
 from evals.metrics.utils import (
     aggregate_to_1D,
-    evaluate_probability,
+    eval_gt_in_text,
     eval_text_similarity,
+    evaluate_probability,
+    run_batchwise_accuracy,
     run_batchwise_evals,
 )
-from evals.metrics.base import unlearning_metric
 
 # Supress the info messages logged while calculating rouge using rouge_scorer
 logging.getLogger("absl").setLevel(logging.WARNING)
@@ -136,3 +138,30 @@ def truth_ratio(model, **kwargs):
 def hm_aggregate(model, **kwargs):
     values = [result["agg_value"] for _, result in kwargs["pre_compute"].items()]
     return {"agg_value": sc.stats.hmean(values)}
+
+@unlearning_metric(name="accuracy")
+def accuracy(model, **kwargs):
+    """Calculate ROUGE metrics and return the aggregated value along with per-index scores."""
+    tokenizer = kwargs["tokenizer"]
+    data = kwargs["data"]
+    collator = kwargs["collators"]
+    batch_size = kwargs["batch_size"]
+    generation_args = kwargs["generation_args"]
+    dataloader = DataLoader(data, batch_size=batch_size, collate_fn=collator)
+
+    fun_args = {"tokenizer": tokenizer, "generation_args": generation_args}
+    scores_by_index, scores_gt = run_batchwise_accuracy(
+        model,
+        dataloader,
+        eval_gt_in_text,
+        fun_args,
+        "Calculating GT in text accuracy",
+    )
+
+    acc_mean = sum(scores_by_index.values()) / len(scores_by_index)
+
+    return {
+        "agg_value": acc_mean,
+        "value_by_index": scores_by_index,
+        "value_by_gt": scores_gt
+    }

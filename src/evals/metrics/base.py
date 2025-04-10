@@ -1,8 +1,9 @@
-import os
 import json
 import logging
-from typing import Callable, Any, Dict
-from data import get_datasets, get_collators
+import os
+from typing import Any, Callable, Dict
+
+from data import get_collators, get_datasets
 
 logger = logging.getLogger("metrics")
 

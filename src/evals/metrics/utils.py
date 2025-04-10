@@ -1,15 +1,17 @@
-from typing import List
-from tqdm import tqdm
-from rouge_score import rouge_scorer
+import warnings
 from collections import defaultdict
-from omegaconf import OmegaConf
+from typing import List
+
 import numpy as np
 import scipy as sc
-from torch import nn
 import torch
-from transformers import StoppingCriteria, StoppingCriteriaList, PreTrainedTokenizer
+from omegaconf import OmegaConf
+from rouge_score import rouge_scorer
+from torch import nn
+from tqdm import tqdm
+from transformers import PreTrainedTokenizer, StoppingCriteria, StoppingCriteriaList
+
 from data.utils import IGNORE_INDEX
-import warnings
 
 
 def dict_transpose(evals):
@@ -276,4 +278,129 @@ def eval_text_similarity(model, tokenizer, batch, generation_args):
             scores, input_texts, ground_truths, gen_texts
         )
     ]
+    return scores
+
+
+
+def run_batchwise_accuracy(model, dataloader, batch_eval_fn, batch_eval_fn_args, eval_msg):
+    """Run batch-wise ACCuracy on a dataset using a specified evaluation function."""
+    evals = defaultdict(dict)
+    evals_gt = defaultdict(dict)
+
+    for batch in tqdm(dataloader, desc=eval_msg, total=len(dataloader)):
+        # if data arrives in normal format we convert the batch to multiple answer-style
+        # like in tofu_perturbed by adding a fake intra_item_index
+        if "input_ids" in batch:
+            batch = {"0": batch}
+        # Assume batch like {"0": {"input_ids": [[]]..., "index": [453, 454..]},
+        #                    "1": {"input_ids": [[]]..., "index": [453, 454..]}..}
+        assert isinstance(next(iter(batch.values())), dict) and "input_ids" in next(
+            iter(batch.values())
+        )
+        for intra_item_idx, mini_batch in batch.items():
+            data_indices = (
+                mini_batch.pop("index").cpu().numpy().tolist()
+            )  # data item indices
+            batch_evals = batch_eval_fn(
+                model=model, batch=mini_batch, **batch_eval_fn_args
+            )
+
+            indexwise_batch_evals = dict(zip(data_indices, batch_evals['corr']))
+            gt_batch_evals = dict(zip(data_indices, zip(batch_evals['ground_truth'], batch_evals['generation'])))
+            assert not (
+                evals[intra_item_idx].keys() & indexwise_batch_evals.keys()
+            ), "Data indices repeated while iterating dataloader"
+            evals[intra_item_idx] |= indexwise_batch_evals
+            evals_gt[intra_item_idx] |= gt_batch_evals
+    # evals looks like {iidx0: {idx453: {prob: 0.1, loss: 1}},
+    #                   iidx1: {idx453: {prob: 0.2, loss: 2}}}
+    if len(evals) == 1:  # normal single answer dataset, no need for list
+        evals = next(iter(evals.values()))
+        evals_gt = next(iter(evals_gt.values()))
+
+    else:
+        # for each index return a dict with all intra_item_idx values in list
+        # after dict transpose looks like {idx453: {prob: [0.1, 0.2], loss: [1, 2]}}
+        evals = dict_transpose(evals)
+        evals_gt = dict_transpose(evals_gt)
+    print("Evaluated", len(evals), "examples")
+    return evals, evals_gt
+
+
+def eval_gt_in_text(model, tokenizer, batch, generation_args):
+    """Evaluate text similarity between model-generated outputs and ground truth using ROUGE scores."""
+
+    def eval_text_in_batch(gen_outputs, ground_truths):
+        present = []
+        tot = 0
+        for gen, gt in zip(gen_outputs, ground_truths):
+            tot += 1 
+            if gt in gen:
+                present.append(1)    
+            else:
+                present.append(0)    
+        
+        return present, tot
+
+    batch = {k: v.to(model.device) for k, v in batch.items()}
+    input_ids = batch["input_ids"]
+    labels = batch["labels"]
+    input_texts = tokenizer.batch_decode(
+        input_ids, skip_special_tokens=True, clean_up_tokenization_spaces=True
+    )
+    tokens = [label[label != IGNORE_INDEX] for label in labels]
+    full_texts = tokenizer.batch_decode(
+        tokens, skip_special_tokens=True, clean_up_tokenization_spaces=True
+    )
+    ground_truths = [
+        full_text.replace(input_text, "").strip()
+        for input_text, full_text in zip(input_texts, full_texts)
+    ]
+    # print("GT:", ground_truths)
+    attention_mask = batch["attention_mask"]
+
+    # convert to a simple dict from DictConfig
+    generation_args = OmegaConf.to_container(generation_args, resolve=True)
+    stopwords = generation_args.pop("stopwords", None)
+    if stopwords is not None:
+        assert isinstance(stopwords, list)
+        sc = stop_sequences_criteria(
+            tokenizer, stopwords, input_ids.shape[1], input_ids.shape[0]
+        )
+        generation_args["stopping_criteria"] = sc
+    output = model.generate(
+        input_ids,
+        attention_mask=attention_mask,
+        **generation_args,
+        pad_token_id=tokenizer.eos_token_id,
+    )
+    gen_texts = tokenizer.batch_decode(
+        output[:, input_ids.shape[-1] :],
+        skip_special_tokens=True,
+        clean_up_tokenization_spaces=True,
+    )
+
+    # cut off at stopwords
+    if stopwords is None:
+        stopwords = []
+    stopwords = [tokenizer.decode([tokenizer.eos_token_id])] + stopwords
+    for i in range(len(gen_texts)):
+        raw_text = gen_texts[i]
+        for word in stopwords:
+            if word and word in raw_text:
+                raw_text = raw_text.split(word)[0]
+        raw_text = raw_text.strip()
+        gen_texts[i] = raw_text
+
+    # print("outs:", gen_texts)
+
+
+    corr, tot = eval_text_in_batch(gen_texts, ground_truths)
+    scores = {
+            "input": full_texts,
+            "ground_truth": ground_truths,
+            "generation": gen_texts,
+            "corr": corr,
+            "tot": tot
+        }
     return scores

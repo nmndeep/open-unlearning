@@ -62,10 +62,16 @@ def main(cfg: DictConfig):
     model, tokenizer = get_model(model_cfg)
 
     eval_cfgs = cfg.eval
-    
+    print(eval_cfgs.keys())
     # Change the type of question dynaimcally to test for? Can be done cleaner: DUDE worry later
-    change_at_runtime(eval_cfgs.tofu.metrics.forget_quality, cfg.qtype)
-
+    if 'tofu' in eval_cfgs.keys():
+        change_at_runtime(eval_cfgs.tofu.metrics.forget_quality, cfg.qtype)
+    else:
+        change_at_runtime(eval_cfgs.muse.metrics.forget_knowmem_ROUGE, cfg.qtype)
+        change_at_runtime(eval_cfgs.muse.metrics.forget_ACCURACY, cfg.qtype)
+        change_at_runtime(eval_cfgs.muse.metrics.retain_knowmem_ROUGE, cfg.qtype)
+        change_at_runtime(eval_cfgs.muse.metrics.retain_ACCURACY, cfg.qtype)
+    
     evaluators = get_evaluators(eval_cfgs)
     for evaluator_name, evaluator in evaluators.items():
         eval_args = {

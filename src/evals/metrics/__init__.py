@@ -1,12 +1,15 @@
 from typing import Dict
+
 from omegaconf import DictConfig
+
 from evals.metrics.base import UnlearningMetric
 from evals.metrics.memorization import (
+    accuracy,
+    hm_aggregate,
     probability,
     probability_w_options,
     rouge,
     truth_ratio,
-    hm_aggregate,
 )
 from evals.metrics.privacy import (
     forget_quality,
@@ -51,3 +54,4 @@ _register_metric(forget_quality)
 _register_metric(hm_aggregate)
 _register_metric(minKpc_negative_logprob)
 _register_metric(relative_auc)
+_register_metric(accuracy)

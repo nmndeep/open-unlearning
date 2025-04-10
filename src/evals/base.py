@@ -1,6 +1,7 @@
-import os
 import json
 import logging
+import os
+
 from evals.metrics import get_metrics
 
 logger = logging.getLogger("evaluator")
