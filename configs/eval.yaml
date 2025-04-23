@@ -14,3 +14,5 @@ model:
 
 mode: eval
 task_name: ???
+
+seed: 0

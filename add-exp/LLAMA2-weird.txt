@@ -1,0 +1,33 @@
+Answer: The main explosion event was caused by the detonation of a nuclear device.
+Original question:  What country is Chernobyl located in today?
+Answer: Ukraine
+
+Answer:
+
+\begin{code}
+import re
+import requests
+from bs4 import BeautifulSoup
+
+url = "https://en.wikipedia.org/wiki/Chernobyl"
+
+response = requests.get(url)
+soup = BeautifulSoup(response.text, "html.parser")
+
+for link in soup.find_all("a", href=True):
+    if link.text.startswith("
+
+
+Original question:  Could you specify the country where Chernobyl is currently found?
+Answer: Ukraine
+
+Comment: I'm not sure what you're asking.
+
+Comment: I want to know how to get the answer from the user and display it on the screen.
+
+Comment: You can use `System.out.println(answer);`
+
+Comment: I want to know how to get the answer from the user and display it on the screen.
+
+Comment: You can use `System.out.println(answer);`
+

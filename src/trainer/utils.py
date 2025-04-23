@@ -1,7 +1,18 @@
-import torch
-from torch import nn
-import torch.nn.functional as F
+import random
 
+import numpy as np
+import torch
+import torch.nn.functional as F
+from torch import nn
+
+
+def seed_everything(seed=42):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
 
 def compute_kl_divergence(model, target_model, inputs):
     with torch.no_grad():
@@ -19,6 +30,31 @@ def compute_kl_divergence(model, target_model, inputs):
     return nn.functional.kl_div(
         current_probs, ref_probs, reduction="batchmean", log_target=True
     ), outputs
+
+
+def compute_js_avg(model, inputs):
+    # get the sum loss for each sequence in a batch
+    # NOTE: not same as model(**inputs).loss but has sum loss for each seq in a batch
+
+    # Compute probabilities from logits
+    outputs = model(**inputs)
+    logits = outputs.logits
+    probs = F.softmax(logits, dim=-1)
+        
+    # Define the uniform distribution over the vocabulary
+    uniform_dist = torch.full_like(probs, 1.0 / probs.size(-1))
+
+    # Compute the midpoint distribution
+    m = 0.5 * (probs + uniform_dist)
+
+    # Compute KL divergence (adding a small value to avoid log(0))
+    kl_p_m = F.kl_div(m.log(), probs, reduction='batchmean')
+    kl_q_m = F.kl_div(m.log(), uniform_dist, reduction='batchmean')
+
+    # Compute final JS Divergence
+    js_div = 0.5 * (kl_p_m + kl_q_m)
+
+    return js_div, outputs
 
 
 def compute_batch_nll(model, inputs):
