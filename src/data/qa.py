@@ -58,6 +58,7 @@ class QADataset(Dataset):
         return item_dct
 
     def __getitem__(self, idx):
+        # print path to dataset location
         question = self.data[idx][self.question_key]
         answer = self.data[idx][self.answer_key]
         index = self.data[idx]["index"]

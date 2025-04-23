@@ -5,6 +5,23 @@ from model import get_model
 from trainer import load_trainer
 from evals import get_evaluator
 
+def change_at_runtime(eval_cfg, suffix):
+
+    # print(OmegaConf.to_yaml(eval_cfg))
+    if isinstance(eval_cfg, DictConfig):
+        for k, v in eval_cfg.items():
+            # If there's an args section with question_key, update it
+            if (
+                isinstance(v, DictConfig)
+                and "args" in v
+                and isinstance(v.args, DictConfig)
+                and "answer_key" in v.args
+            ):
+                v.args.answer_key = v.args.answer_key+suffix
+                v.args.question_key = v.args.question_key+suffix # ugly fix
+            else:
+                # Recursively check nested configs
+                change_at_runtime(v, suffix)
 
 @hydra.main(version_base=None, config_path="../configs", config_name="train.yaml")
 def main(cfg: DictConfig):
@@ -20,6 +37,13 @@ def main(cfg: DictConfig):
 
     # Load Dataset
     data_cfg = cfg.data
+    from omegaconf import OmegaConf
+    import yaml
+    with open('tmp-config-data.yaml', 'w') as f:
+        yaml.dump(OmegaConf.to_container(data_cfg), f)
+    change_at_runtime(data_cfg, '_real')
+    with open('tmp-config-data-afterchange.yaml', 'w') as f:
+        yaml.dump(OmegaConf.to_container(data_cfg), f)
     data = get_data(
         data_cfg, mode=mode, tokenizer=tokenizer, template_args=template_args
     )
@@ -31,6 +55,7 @@ def main(cfg: DictConfig):
     # Get Trainer
     trainer_cfg = cfg.trainer
     assert trainer_cfg is not None, ValueError("Please set trainer")
+
 
     # Get Evaluator
     evaluator = None
