@@ -1,0 +1,23 @@
+anchor: forget
+forget:
+  TOFU_QA_forget:
+    args:
+      answer_key: answer_real
+      hf_args:
+        name: ${forget_split}
+        path: locuslab/TOFU
+        split: train
+      max_length: 512
+      question_key: question_real
+    handler: QADataset
+retain:
+  TOFU_QA_retain:
+    args:
+      answer_key: answer_real
+      hf_args:
+        name: ${retain_split}
+        path: locuslab/TOFU
+        split: train
+      max_length: 512
+      question_key: question_real
+    handler: QADataset

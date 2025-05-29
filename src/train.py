@@ -1,6 +1,6 @@
 import hydra
 from omegaconf import DictConfig
-from trained.utils import seed_everything
+from trainer.utils import seed_everything
 
 from data import get_collators, get_data
 from evals import get_evaluator
@@ -58,7 +58,19 @@ def main(cfg: DictConfig):
     # Get Trainer
     trainer_cfg = cfg.trainer
     assert trainer_cfg is not None, ValueError("Please set trainer")
-
+    with open('trainerargs-cfg.yaml', 'w') as f:
+        yaml.dump(OmegaConf.to_container(trainer_cfg), f)
+    # for k,v in trainer_cfg.items():
+    #     print(k)
+    #     print(v)
+    #     if (
+    #             isinstance(v, DictConfig)
+    #             and "args" in v
+    #             and isinstance(v.args, DictConfig)
+    #             and "logging_steps" in v.args
+    #         ):
+    #         v.args.logging_steps = 1
+    # raise ValueError("stop here")
 
     # Get Evaluator
     evaluator = None
@@ -86,6 +98,12 @@ def main(cfg: DictConfig):
         evaluator=evaluator,
         template_args=template_args,
     )
+
+    # save trainer args
+    with open('trainerargs.yaml', 'w') as f:
+        print(trainer_args)
+        print(type(trainer_args))
+        yaml.dump(trainer_args.to_dict(), f)
 
     if trainer_args.do_train:
         trainer.train()

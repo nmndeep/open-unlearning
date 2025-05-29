@@ -239,14 +239,19 @@ class EvalJUDGE:
         upto = 1 if self.evall == 'retain' else 5
 
         if self.data == 'facts':
-            with open(f'./newData/{self.evall}_prevKnow_all_paraphrases.json') as f:
-                q_data = json.load(f)
-            qs = ['q_org']
-            #new questions having 5 para-phrases each
-            qs.extend([f'qmistral{i}' for i in range(1,6)])
-            qs.extend([f'qphi{i}' for i in range(1,6)])
-            qs.extend([f'qqwen{i}' for i in range(1,6)])
-
+            if self.evall == 'forget':
+                with open(f'/mnt/nsingh/open-unlearning/newData/{self.evall}_prevKnow_all_paraphrases.json') as f:
+                    q_data = json.load(f)
+                qs = ['q_org']
+                #new questions having 5 para-phrases each
+                qs.extend([f'qmistral{i}' for i in range(1,6)])
+                qs.extend([f'qphi{i}' for i in range(1,6)])
+                qs.extend([f'qqwen{i}' for i in range(1,6)])
+            elif args.evall=='retain':
+                with open(f'/mnt/nsingh/open-unlearning/newData/{args.evall}_prevKnow_Mistral_para.json') as f:
+                    q_data = json.load(f)
+                qs = ['q_org']
+                qs.extend([f'q{i}' for i in range(1,11)])
         else:
             if self.evall == 'retain':
                 PARR = '/mnt/nsingh/huggingface-models/huggingface/datasets/locuslab___tofu/retain95/0.0.0/324592d84ae4f482ac7249b9285c2ecdb53e3a68/tofu-train.arrow'
@@ -256,7 +261,7 @@ class EvalJUDGE:
             else:
                 
                 print("we here")
-                with open(f'./newData/{self.evall}_prevKnow40_cleaned_all_paraphrases.json') as f:
+                with open(f'/mnt/nsingh/open-unlearning/newData/{self.evall}_prevKnow40_cleaned_all_paraphrases.json') as f:
                     q_data = json.load(f)
                 qs = ['q_org']
                 qs.extend([f'qmistral{i}' for i in range(1,6)])

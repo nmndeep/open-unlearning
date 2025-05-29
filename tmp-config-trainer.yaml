@@ -1,0 +1,26 @@
+args:
+  bf16: true
+  bf16_full_eval: true
+  ddp_find_unused_parameters: true
+  do_eval: true
+  do_train: true
+  eval_on_start: true
+  eval_strategy: epoch
+  gradient_accumulation_steps: 8
+  gradient_checkpointing: true
+  learning_rate: 1.0e-05
+  logging_dir: ${trainer.args.output_dir}/logs
+  logging_steps: 5
+  lr_scheduler_type: constant
+  num_train_epochs: 10
+  optim: paged_adamw_32bit
+  output_dir: ${paths.output_dir}
+  per_device_eval_batch_size: 16
+  per_device_train_batch_size: 4
+  remove_unused_columns: false
+  report_to: tensorboard
+  save_only_model: true
+  save_strategy: 'no'
+  seed: 0
+  weight_decay: 0.0
+handler: GradAscent

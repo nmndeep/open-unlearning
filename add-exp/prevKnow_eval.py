@@ -23,9 +23,39 @@ KEYS = {
     'TOFU_GAscent_para': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradAscent_4_4_testrealfacts_paraphrased',
     'TOFU_GDiff_para': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradDiff_4_4_testrealfacts_paraphrased',
     'TOFU_GAscent_2ep_para': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradAscent_4_4_testrealfacts_paraphrased2eps',
-    'TOFU_GDiff_2ep_para': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradDiff_4_4_testrealfacts_paraphrased2eps'
-}
+    'TOFU_GDiff_2ep_para': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradDiff_4_4_testrealfacts_paraphrased2eps',
+    'TOFU_GAscent_para_testset': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradAscent_4_4_testrealfacts_paraphrased_testset',
 
+    'TOFU_GAscent_para_0': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradAscent_4_4_testrealfacts_paraphrased0',
+    'TOFU_GAscent_para_1': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradAscent_4_4_testrealfacts_paraphrased1',
+    'TOFU_GAscent_para_2': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradAscent_4_4_testrealfacts_paraphrased2',
+    'TOFU_GAscent_para_3': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradAscent_4_4_testrealfacts_paraphrased3',
+    'TOFU_GAscent_para_4': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradAscent_4_4_testrealfacts_paraphrased4',
+    'TOFU_GAscent_para_5': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradAscent_4_4_testrealfacts_paraphrased5',
+
+
+    'TOFU_GAscent_para_testset50eps': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradAscent_4_4_testrealfacts_paraphrased_testset50eps',
+    'TOFU_GAscent_para_testset30eps': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradAscent_4_4_testrealfacts_paraphrased_testset30eps',
+
+    'TOFU_GAscent_para_0_q_org': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradAscent_4_4_testrealfacts_paraphrased_keyq_org',
+    'TOFU_GAscent_para_0_qphi1': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradAscent_4_4_testrealfacts_paraphrased_keyqphi1',
+    'TOFU_GAscent_para_0_qphi2': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradAscent_4_4_testrealfacts_paraphrased_keyqphi2',
+    'TOFU_GAscent_para_0_qphi3': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradAscent_4_4_testrealfacts_paraphrased_keyqphi3',
+    'TOFU_GAscent_para_0_qphi4': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradAscent_4_4_testrealfacts_paraphrased_keyqphi4',
+    'TOFU_GAscent_para_0_qphi5': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradAscent_4_4_testrealfacts_paraphrased_keyqphi5',
+
+    'TOFU_GAscent_para_0_q_org_eval0': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradAscent_4_4_testrealfacts_paraphrased_keyq_org',
+    'TOFU_GAscent_para_0_q_org_eval1': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradAscent_4_4_testrealfacts_paraphrased_keyq_org',
+    'TOFU_GAscent_para_0_q_org_eval2': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradAscent_4_4_testrealfacts_paraphrased_keyq_org',
+    'TOFU_GAscent_para_0_q_org_eval3': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradAscent_4_4_testrealfacts_paraphrased_keyq_org',
+
+    'TOFU_GAscent_para_testset_corrected': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradAscent_4_4_testrealfacts_paraphrased_testset_corrected',
+    'TOFU_GAscent_para_5_corrected': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradAscent_4_4_testrealfacts_paraphrased_5_corrected',
+    'TOFU_GAscent_para_3_corrected': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradAscent_4_4_testrealfacts_paraphrased_3_corrected',
+    'TOFU_GAscent_para_0_corrected': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradAscent_4_4_testrealfacts_paraphrased_0_corrected',
+    'TOFU_GAscent_para_5_corrected_adjusted': '/scratch/mmueller67/open-unlearning/saves/unlearn/tofu_Llama-3.2-1B-Instruct_forget01_GradAscent_4_32_testrealfacts_paraphrased_5_corrected',
+
+}
 
 def eval_models(args):
     MODELL = args.modelName
@@ -33,13 +63,19 @@ def eval_models(args):
     upto = 1 if args.evall == 'retain' else 5
     
     if args.data == 'facts':
-        with open(f'./newData/{args.evall}_prevKnow_all_paraphrases.json') as f:
-        # with open(f'./newData/{args.evall}_prevKnow_Mistral_para.json') as f:
-            d = json.load(f)
-        qs = ['q_org']
-        qs.extend([f'qmistral{i}' for i in range(1,6)])
-        qs.extend([f'qphi{i}' for i in range(1,6)])
-        qs.extend([f'qqwen{i}' for i in range(1,6)])
+        if args.evall=='forget':
+            with open(f'/mnt/nsingh/open-unlearning/newData/{args.evall}_prevKnow_all_paraphrases.json') as f:
+            # with open(f'./newData/{args.evall}_prevKnow_Mistral_para.json') as f:
+                d = json.load(f)
+            qs = ['q_org']
+            qs.extend([f'qmistral{i}' for i in range(1,6)])
+            qs.extend([f'qphi{i}' for i in range(1,6)])
+            qs.extend([f'qqwen{i}' for i in range(1,6)])
+        elif args.evall=='retain':
+            with open(f'/mnt/nsingh/open-unlearning/newData/{args.evall}_prevKnow_Mistral_para.json') as f:
+                d = json.load(f)
+            qs = ['q_org']
+            qs.extend([f'q{i}' for i in range(1,11)])
 
     else:
         if args.evall == 'retain':
@@ -47,7 +83,7 @@ def eval_models(args):
         else:
             #Clean up a bit
             print("We here")
-            with open(f'./newData/{args.evall}_prevKnow40_cleaned_all_paraphrases.json') as f:
+            with open(f'/mnt/nsingh/open-unlearning/newData/{args.evall}_prevKnow40_cleaned_all_paraphrases.json') as f:
         # with open(f'./newData/{args.evall}_prevKnow_Mistral_para.json') as f:
                 d = json.load(f)
         qs = ['q_org']
@@ -61,7 +97,8 @@ def eval_models(args):
     if args.evall == 'retain': # and args.data == 'facts':
         #specially needed for retain as samples too large
         # random.shuffle(d)
-        d = d[:300]
+        # d = d[:300]
+        pass
 
     model = AutoModelForCausalLM.from_pretrained(KEYS[MODELL])
     tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-3.2-1B-Instruct")
@@ -123,7 +160,7 @@ if __name__ == "__main__":
         "--evall", default='retain', type=str, help="forget/retain"
     )
     parser.add_argument(
-        "--data", default='tofu', type=str, help="facts/tofu"
+        "--data", default='facts', type=str, help="facts/tofu"
     )
     parser.add_argument(
         "--addendum", default='', type=str, help="add to output"

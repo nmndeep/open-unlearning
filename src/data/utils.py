@@ -7,6 +7,7 @@ IGNORE_INDEX = -100  # TODO put in common constants
 
 
 def load_hf_dataset(path, **kwargs):
+    print('HF PATH',path)
     dataset = datasets.load_dataset(path, **kwargs)
     return dataset
 
@@ -174,3 +175,4 @@ def add_dataset_index(dataset):
     indexing = np.arange(len(dataset))
     dataset = dataset.add_column("index", indexing)
     return dataset
+ 

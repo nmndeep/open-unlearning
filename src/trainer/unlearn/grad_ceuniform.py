@@ -1,15 +1,17 @@
 import copy
-from trainer.utils import compute_kl_divergence
-from trainer.unlearn.base import UnlearnTrainer
-import torch
 
-class GradDiff(UnlearnTrainer):
+from trainer.unlearn.base import UnlearnTrainer
+from trainer.utils import compute_uniform_ce_avg, compute_kl_divergence
+
+
+class GradCEUniform(UnlearnTrainer):
     def __init__(self, gamma=1.0, alpha=1.0, retain_loss_type="NLL", *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.gamma = gamma
-        self.alpha = alpha
+        self.gamma = 0.2
+        self.alpha = alpha #1-self.gamma
         self.retain_loss_type = retain_loss_type
         self.ref_model = None
+
         if retain_loss_type == "KL":
             self.ref_model = self._prepare_ref_model(self.model)
 
@@ -38,6 +40,7 @@ class GradDiff(UnlearnTrainer):
             )
         return retain_loss
 
+
     def compute_loss(self, model, inputs, return_outputs=False):
         forget_inputs = inputs["forget"]
         forget_inputs = {
@@ -45,9 +48,9 @@ class GradDiff(UnlearnTrainer):
             "attention_mask": forget_inputs["attention_mask"],
             "labels": forget_inputs["labels"],
         }
-
-        forget_outputs = model(**forget_inputs)
-        forget_loss = -forget_outputs.loss
+        forget_loss, forget_outputs = compute_uniform_ce_avg(model, forget_inputs)
+        # forget_outputs = model(**forget_inputs)
+        # forget_loss = -forget_outputs.loss
 
         retain_inputs = inputs["retain"]
         retain_inputs = {
@@ -64,39 +67,5 @@ class GradDiff(UnlearnTrainer):
                 "retain_loss": retain_loss.item(),
                 "forget_loss": forget_loss.item(),
             })
-
-        return (loss, forget_outputs) if return_outputs else loss
-
-class GradAscentWithRetainLogging(GradDiff):
-    def __init__(self, gamma=1.0, alpha=1.0, retain_loss_type="NLL", *args, **kwargs):
-        super().__init__(gamma=gamma, alpha=alpha, retain_loss_type=retain_loss_type, *args, **kwargs)
-    def compute_loss(self, model, inputs, return_outputs=False):
-        forget_inputs = inputs["forget"]
-        forget_inputs = {
-            "input_ids": forget_inputs["input_ids"],
-            "attention_mask": forget_inputs["attention_mask"],
-            "labels": forget_inputs["labels"],
-        }
-
-        forget_outputs = model(**forget_inputs)
-        forget_loss = -forget_outputs.loss
-        with torch.no_grad():
-            retain_inputs = inputs["retain"]
-            retain_inputs = {
-                "input_ids": retain_inputs["input_ids"],
-                "attention_mask": retain_inputs["attention_mask"],
-                "labels": retain_inputs["labels"],
-            }
-            retain_loss = self.compute_retain_loss(model=model, retain_inputs=retain_inputs)
-
-        loss = forget_loss
-
-        if self.accelerator.is_local_main_process:
-            self.log({
-                "retain_loss": retain_loss.item(),
-                "forget_loss": forget_loss.item(),
-            })
-
-        retain_loss=0.
 
         return (loss, forget_outputs) if return_outputs else loss

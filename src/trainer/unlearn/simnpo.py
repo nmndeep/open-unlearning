@@ -28,4 +28,9 @@ class SimNPO(GradDiff):
         retain_loss = self.compute_retain_loss(model=model, retain_inputs=retain_inputs)
 
         loss = self.gamma * forget_loss + self.alpha * retain_loss
+        if self.accelerator.is_local_main_process:
+            self.log({
+                "retain_loss": retain_loss.item(),
+                "forget_loss": forget_loss.item(),
+            })
         return (loss, forget_outputs) if return_outputs else loss

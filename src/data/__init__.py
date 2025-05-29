@@ -34,6 +34,10 @@ def _load_single_dataset(dataset_name, dataset_cfg: DictConfig, **kwargs):
             f"{dataset_handler_name} not implemented or not registered"
         )
     dataset_args = dataset_cfg.args
+    # print(dataset_args)
+    print(dataset_handler_name)
+    print(dataset_handler)
+    # print(kwargs)
     return dataset_handler(**dataset_args, **kwargs)
 
 
@@ -43,6 +47,7 @@ def get_datasets(dataset_cfgs: Union[Dict, DictConfig], **kwargs):
         dataset[dataset_name] = _load_single_dataset(
             dataset_name, dataset_cfg, **kwargs
         )
+        print(dataset_name, len(dataset[dataset_name]))
     if len(dataset) == 1:
         # return a single dataset
         return list(dataset.values())[0]

@@ -19,7 +19,15 @@ class QADataset(Dataset):
         super(QADataset, self).__init__()
         self.tokenizer = tokenizer
         self.max_length = max_length
+        print("HF ARGS",hf_args)
+        from omegaconf import OmegaConf
+        hf_args_parsed = OmegaConf.to_container(hf_args, resolve=True)
+        print("HF ARGS PARSED",hf_args_parsed)
+        # self.data = load_hf_dataset(**hf_args_parsed)
         self.data = load_hf_dataset(**hf_args)
+        print("DATA",self.data)
+        print(self.data[0])
+        print(self.data[-1])
         self.data = add_dataset_index(self.data)
         self.fs_data = None
         if few_shot_dataset_hf_args is not None:
@@ -72,6 +80,10 @@ class QADataset(Dataset):
                 )
                 item[i] = sample_item
         else:
+            print(idx)
+            print(question)
+            print(answer)
+            print(type(answer))
             raise NotImplementedError("answer format not found")
         return item
 

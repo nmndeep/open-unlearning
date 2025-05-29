@@ -5,11 +5,16 @@ from transformers import Trainer, TrainingArguments
 
 from trainer.base import FinetuneTrainer
 from trainer.unlearn.grad_ascent import GradAscent
-from trainer.unlearn.grad_diff import GradDiff
+from trainer.unlearn.grad_diff import GradDiff, GradAscentWithRetainLogging
 from trainer.unlearn.npo import NPO
 from trainer.unlearn.dpo import DPO
 from trainer.unlearn.simnpo import SimNPO
 from trainer.unlearn.rmu import RMU
+from trainer.unlearn.grad_jsdiff import GradJSDiff, GradJSDiffKL, GradJSDiffJS, GradJSAscentWithRetainLogging, GradJSAscentNamanWithRetainLogging, GradJSDiffJSNaman, GradJSDiffJSMatthias
+from trainer.unlearn.grad_ceuniform import GradCEUniform
+from trainer.unlearn.grad_jsdiffcomma import GradJSDiffComma, GradJSDiffCommaNaman, GradJSAscentCommaNaman, GradJSDiffHashNaman, GradJSDiffTagsNaman, GradJSDiffAndNaman, GradJSDiffTagsNaman
+from trainer.unlearn.grad_jsdiffrandom import GradJSDiffRandom, GradJSDiffRandomNaman
+from trainer.unlearn.grad_jsascent import GradJSAscent
 
 TRAINER_REGISTRY: Dict[str, Any] = {}
 
@@ -81,3 +86,21 @@ _register_trainer(NPO)
 _register_trainer(DPO)
 _register_trainer(SimNPO)
 _register_trainer(RMU)
+_register_trainer(GradJSDiff)
+_register_trainer(GradCEUniform)
+_register_trainer(GradJSDiffComma)
+_register_trainer(GradJSDiffRandom)
+_register_trainer(GradJSAscent)
+_register_trainer(GradJSDiffKL)
+_register_trainer(GradJSDiffJS)
+_register_trainer(GradAscentWithRetainLogging)
+_register_trainer(GradJSAscentWithRetainLogging)
+_register_trainer(GradJSAscentNamanWithRetainLogging)
+_register_trainer(GradJSDiffJSNaman)
+_register_trainer(GradJSDiffCommaNaman)
+_register_trainer(GradJSAscentCommaNaman)
+_register_trainer(GradJSDiffRandomNaman)
+_register_trainer(GradJSDiffJSMatthias)
+_register_trainer(GradJSDiffHashNaman)
+_register_trainer(GradJSDiffTagsNaman)
+_register_trainer(GradJSDiffAndNaman)

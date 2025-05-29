@@ -11,4 +11,9 @@ class GradAscent(UnlearnTrainer):
         }
         outputs = model(**forget_inputs)
         loss = -outputs.loss
+        if self.accelerator.is_local_main_process:
+            self.log({
+                "retain_loss": 0,
+                "forget_loss": loss.item(),
+            })
         return (loss, outputs) if return_outputs else loss

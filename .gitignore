@@ -181,3 +181,11 @@ cython_debug/
 .idea/
 
 .vscode/
+
+# max
+*.ipynb # no notebooks
+plots/
+new_data/
+transformers/
+newData/
+*.ipynb
